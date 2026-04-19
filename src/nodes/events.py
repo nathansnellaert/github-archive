@@ -1,8 +1,4 @@
-"""GitHub Archive Events.
-
-Downloads and transforms GitHub event data from GH Archive.
-Aggregates by hour for past 30 days.
-"""
+"""GitHub Archive Events — hourly aggregated GitHub activity from GH Archive."""
 import gzip
 import json
 from datetime import datetime, timedelta
