@@ -23,7 +23,8 @@ METADATA = {
         "hour": "Hour timestamp (YYYY-MM-DDTHH:00:00Z)",
         "event_type": "Type of GitHub event (PushEvent, PullRequestEvent, etc.)",
         "event_count": "Number of events in this hour",
-    }
+    },
+    "license": "CC0-1.0",
 }
 
 
@@ -117,7 +118,8 @@ def test(table: pa.Table) -> None:
         "ForkEvent", "CreateEvent", "DeleteEvent", "IssueCommentEvent",
         "PullRequestReviewEvent", "PullRequestReviewCommentEvent",
         "CommitCommentEvent", "GollumEvent", "MemberEvent", "PublicEvent",
-        "ReleaseEvent", "SponsorshipEvent"
+        "ReleaseEvent", "SponsorshipEvent", "DiscussionEvent",
+        "DiscussionCommentEvent",
     }
     event_types = set(table.column("event_type").to_pylist())
     unknown = event_types - known_types
@@ -139,18 +141,16 @@ def transform():
 
     merge(table, DATASET_ID, key=["hour", "event_type"])
     publish(DATASET_ID, METADATA)
-def run():
-    """Download and transform GitHub events."""
-    download()
-    transform()
 
 
 NODES = {
-    run: [],
+    download: [],
+    transform: [download],
 }
 
 
 if __name__ == "__main__":
     from subsets_utils import validate_environment
     validate_environment()
-    run()
+    download()
+    transform()
